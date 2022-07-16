@@ -1,0 +1,47 @@
+::language = "Artithmetic"
+::import common_tokens
+::parser-mode=cyk
+
+
+# Whitespace
+
+::whitespace := r'\s' # this is the default
+::whitespace-rule = skip # this is the default
+
+
+# Grammar
+
+constant := 'e' | 'pi' | common::NUMBER
+TERM := '-' ? constant
+OP := OP '+' OP | OP '-' OP | TERM
+
+
+# Interpreter
+
+@common::NUMBER value:
+    return float(self.raw)
+
+@constant ('e') value:
+    return 2.71828
+
+@constant ('pi') value:
+    return 3.14159
+
+@TERM value:
+    if CHILD[0].raw == '-':
+        return -1 * CHILD[1].value
+
+@OP (left:OP opcode right:OP) value:
+    if CHILD['opcode'].raw == '+':
+        return CHILD['Left'].value + CHILD['Right'].value
+    elif CHILD['opcode'].raw == '-':
+        return CHILD['Left'].value - CHILD['Right'].value
+
+@OP ( _ ) value:
+    return CHILD[0].value
+
+@OP main:
+    show(self.value)
+
+def show(value):
+    print(f'Your value is: {value}')
