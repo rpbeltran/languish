@@ -15,6 +15,7 @@ constant := 'e' | 'pi' | common::NUMBER
 TERM := '-' ? constant
 OP := OP '+' OP | OP '-' OP | TERM
 
+::start = OP
 
 # Interpreter
 
@@ -40,7 +41,7 @@ OP := OP '+' OP | OP '-' OP | TERM
 @OP ( _ ) value:
     return CHILD[0].value
 
-@OP main:
+::main:
     show(self.value)
 
 def show(value):
